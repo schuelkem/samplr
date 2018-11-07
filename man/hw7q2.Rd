@@ -9,11 +9,6 @@
 \title{Homework 7 Question 2 Distribution}
 \usage{
 dhw7q2(x, log = FALSE)
-phw7q2(q, lower.tail = TRUE, log.p = FALSE)
-qhw7q2(p, lower.tail = TRUE, log.p = FALSE)
-rhw7q2(n)
-
-dhw7q2(x, log = FALSE)
 
 phw7q2(q, lower.tail = TRUE, log.p = FALSE)
 
@@ -22,18 +17,18 @@ qhw7q2(p, lower.tail = TRUE, log.p = FALSE)
 rhw7q2(n)
 }
 \arguments{
-\item{lower.tail}{logical; if TRUE (default), probabilites are $P[X \le x]$ otherwise, $P[X > x]$}
+\item{x, q}{vector of quantiles}
+
+\item{log, log.p}{logical; if TRUE, probabilities p are given as log(p)}
+
+\item{lower.tail}{logical; if TRUE (default), probabilites are \eqn{P[X \le x]} otherwise, \eqn{P[X > x]}}
 
 \item{p}{vector of probabilites}
 
 \item{n}{number of observations. If length(n) > 1, the length is taken to be the number required}
-
-\item{[x, }{q] vector of quantiles}
-
-\item{[log, }{log.p] logical; if TRUE, probabilities p are given as log(p)}
 }
 \value{
-dnorm gives the density, pnorm gives the distribution function, qnorm gives the quantile function, and rnorm generates random deviates.
+dhw7q2 gives the density, phw7q2 gives the distribution function, qhw7q2 gives the quantile function, and rhw7q2 generates random deviates.
 The length of the result is determined by n for rnorm, and is the maximum of the lengths of the numerical arguments for the other functions.
 The numerical arguments other than n are recycled to the length of the result. Only the first elements of the logical arguments are used.
 }
@@ -44,7 +39,7 @@ distribution function, qhw7q2 gives the quantile function, and rhw7q2
 generates random deviates.
 }
 \details{
-This distribution has density $$f(x) = 6x(1-x)$$ for 0 < x < 1
+This distribution has density \deqn{f(x) = 6x(1-x)} for 0 < x < 1
 }
 \note{
 The characteristics of output from pseudo-random number generators
@@ -53,10 +48,10 @@ information on R's random number generation algorithms.
 }
 \examples{
 ## density function
-plot(dhw7q2(seq(0, 1, 0.0001)))
+plot(dhw7q2(x = seq(0, 1, 0.0001)))
 
 ## distribution function
-plot(phw7q2(seq(0, 1, 0.0001)))
+plot(phw7q2(q = seq(0, 1, 0.0001)))
 
 ## quantile function
 qhw7q2(p = 0)
@@ -67,4 +62,7 @@ plot(qhw7q2(p = seq(0, 1, 0.001)))
 ## random deviates
 rhw7q2(n = 10)
 
+}
+\seealso{
+\code{\link[stats]{Uniform}}
 }
