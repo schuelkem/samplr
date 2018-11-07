@@ -23,8 +23,6 @@
 #'
 #' @seealso \code{\link[stats]{Uniform}}
 #'
-#' @export
-#'
 #' @examples
 #' ## density function
 #' plot(dhw7q2(x = seq(0, 1, 0.0001)))
@@ -43,21 +41,23 @@
 #'
 #' @name hw7q2
 NULL
-#> NULL
 
 #' @rdname hw7q2
+#' @export
 dhw7q2 <- function(x, log = FALSE) {
   d <- sapply(X = x, FUN = function(x) ifelse(0 < x & x < 1, 6 * x * (1 - x), 0))
   sapply(X = d, FUN = function(x) ifelse(log, log(x), x))
 }
 
 #' @rdname hw7q2
+#' @export
 phw7q2 <- function(q, lower.tail = TRUE, log.p = FALSE) {
   p <- sapply(X = q, FUN = function(x) ifelse(lower.tail, 3 * x^2 - 2 * x^3, 1 - (3 * x^2 - 2 * x^3)))
   sapply(X = p, FUN = function(x) ifelse(log.p, log(x), x))
 }
 
 #' @rdname hw7q2
+#' @export
 qhw7q2 <- function(p, lower.tail = TRUE, log.p = FALSE) {
   assertive::assert_all_are_in_closed_range(x = p,
                                             lower = 0,
@@ -75,6 +75,7 @@ qhw7q2 <- function(p, lower.tail = TRUE, log.p = FALSE) {
 }
 
 #' @rdname hw7q2
+#' @export
 rhw7q2 <- function(n) {
   qhw7q2(p = runif(n = n))
 }
