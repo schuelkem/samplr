@@ -6,7 +6,7 @@
 ## Overview
 This [R](https://cloud.r-project.org) package was created to fulfill course requirements of [Saint Louis University](https://www.slu.edu) MATH 4800: Probability Theory for the Fall 2018 semester. The purpose of the package is to sample from continuous distributions given their probability density functions.
 
-## Access Lesson
+## Install Package
 You can install this package by using `devtools`:
 
 ```r
