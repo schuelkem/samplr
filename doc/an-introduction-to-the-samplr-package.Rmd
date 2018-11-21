@@ -1,0 +1,119 @@
+---
+title: "An Introduction to the samplr Package"
+author: "Matt Schuelke"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(ggplot2)
+library(samplr)
+```
+
+The `samplr` package provides a number of functions for sampling from continuous distributions.
+
+# rdist
+
+The `rdist` function generates random deviates from a continuous random variable. The user supplies the probability density function of the continuous random variable, and the function utilizing rejection sampling to generate the deviates.
+
+Rejection sampling is a type of exact simulation method in numerical analysis and works for any distrubtion in $\rm I\!R^m$ with a density. The idea of rejection sampling is to uniformly randomly sample the support and keep samples in the region under the graph of the density function.
+
+Specifically, the steps of rejection sampling are:
+
+1. select uniformly at random a quantile candidate in the support of the function 
+2. compute the probability density of the quantile candidate
+3. select a critical value via uniform sampling between 0 and the global maximum density
+4. retain the quantile candidate as a sample if the quantile density is less than the critical value; otherwise reject the candidate and start over.
+
+Rejection sampling has two main assumptions:
+
+1. $f(x) \le C$ (global maximum density)
+2. $\exists$ a, b such that $P(a \le X \le b) = 1$ (finite)
+
+## Uniform
+
+Here is an example of using `rdist` to sample from the standard uniform distribution.
+
+The uniform distribution has probability density function:
+
+$$\text{pdf = }\begin{cases}\frac{1}{b - a} \text{for } x \in [a, b]\\0 \text{ otherwise}\end{cases}$$
+We first generate a bunch of deviates and then plot their density in black. Then the true density is overlayed in red.
+
+```{r}
+df_uniform_samples <- 
+  data.frame(u = rdist(n = 10000, 
+                       pdf = dunif, 
+                       a = 0, 
+                       b = 1, 
+                       C = 1, 
+                       min = 0, 
+                       max = 1))
+
+ggplot(df_uniform_samples, aes(x = u)) + 
+  geom_density() + 
+  stat_function(aes(x = 0), fun = dunif, args = list(min = 0, max = 1), color = "red")
+```
+
+## Beta
+
+Here is an example of using `rdist` to sample from a beta distribution with both shape parameters equal to 2.
+
+The beta distribution has probability density function:
+
+$$\text{pdf = }\frac{x^{\alpha - 1}(1 - x)^{\beta - 1}}{B(\alpha, \beta)}$$
+
+$$\text{where }B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha + \beta)}$$
+
+We first generate a bunch of deviates and then plot their density in black. Then the true density is overlayed in red.
+
+```{r}
+df_beta_samples <- 
+  data.frame(b = rdist(n = 10000, 
+                       pdf = dbeta, 
+                       a = 0, 
+                       b = 1, 
+                       C = 1.5, 
+                       shape1 = 2, 
+                       shape2 = 2))
+
+ggplot(df_beta_samples, aes(x = b)) + 
+  geom_density() + 
+  stat_function(aes(x = 0), fun = dbeta, args = list(shape1 = 2, shape2 = 2), color = "red")
+```
+
+## Custom Random Variable
+
+Here is an example of using `rdist` to sample from a custom distribution.
+
+In this case, the custom density function is that of a beta with shape parameters 2 and 5.
+
+```{r}
+dcustom <- function (x) {
+  sapply(X = x, 
+         FUN = function(x) {
+           ifelse(0 < x & x < 1, 
+                  (gamma(2+5)/(gamma(2)*gamma(5)))*(x^(2-1)*(1-x)^(5-1)), 
+                  0)
+         })
+}
+
+df_custom_samples <- 
+  data.frame(b = rdist(n = 10000, 
+                       pdf = dcustom, 
+                       a = 0, 
+                       b = 1, 
+                       C = 2.5))
+
+ggplot(df_custom_samples, aes(x = b)) + 
+  geom_density() + 
+  stat_function(aes(x = 0), fun = dcustom, color = "red")
+```
