@@ -11,9 +11,9 @@ rdist(n, pdf, a, b, C, ...)
 
 \item{pdf}{a function that is the pdf of the random variable.}
 
-\item{a, b}{lower and upper limits of the distribution. Must be finite such that $P(a \le X \le b) = 1$.}
+\item{a, b}{lower and upper limits of the distribution. Must be finite such that \eqn{P(a \le X \le b) = 1}.}
 
-\item{C}{a numeric such that $f(x) \le C$ for all values of x.}
+\item{C}{a numeric such that \eqn{f(x) \le C} for all values of x.}
 
 \item{...}{further arguments passed to or from other methods.}
 }
