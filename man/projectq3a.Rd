@@ -4,12 +4,12 @@
 \alias{projectq3a}
 \title{projectq3a}
 \usage{
-projectq3a(n, pdf, a, b, C, ...)
+projectq3a(n, jpdf, a, b, C, ...)
 }
 \arguments{
 \item{n}{number of observations. If length(n) > 1, the length is taken to be the number required.}
 
-\item{pdf}{a function that is the joint pdf of the distribution. Should use x and y as quantile arguments.}
+\item{jpdf}{a function that is the joint pdf of the distribution. Should use x and y as quantile arguments.}
 
 \item{a, b}{lower and upper limits of the sides of the distribution. Must be finite such that \eqn{P(a \le X \le b \cap a \le Y \le b) = 1}.}
 
@@ -24,7 +24,7 @@ data.frame of random deviate pairs
 This function generates pairs of random deviates from a 2D continuous distribution defined on a square with the supplied joint probability density function via rejection sampling.
 }
 \examples{
-plot(projectq3a(n = 10000, pdf = d2dunif, a = 0, b = 1, C = 1))
-plot(projectq3a(n = 10000, pdf = d2dunif, a = 0, b = 2, C = 1/4, min = 0, max = 2))
-plot(projectq3a(n = 10000, d2dcirclecontour, a = -1, b = 1, C = 1))
+plot(projectq3a(n = 10000, jpdf = d2dunif, a = 0, b = 1, C = 1))
+plot(projectq3a(n = 10000, jpdf = d2dunif, a = 0, b = 2, C = 1/4, min = 0, max = 2))
+plot(projectq3a(n = 10000, jpdf = d2dcirclecontour, a = -1, b = 1, C = 1))
 }

@@ -2,7 +2,10 @@
 title: "An Introduction to the samplr Package"
 author: "Matt Schuelke"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette: 
+    toc: yes
+    toc_depth: 3
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
@@ -27,7 +30,7 @@ The `samplr` package provides a number of functions for sampling from continuous
 
 The `projectq2a` function generates random deviates from a continuous random variable. The user supplies the probability density function of the continuous random variable, and the function utilizing rejection sampling to generate the deviates.
 
-Rejection sampling is a type of exact simulation method in numerical analysis and works for any distrubtion in $\rm I\!R^m$ with a density. The idea of rejection sampling is to uniformly randomly sample the support and keep samples in the region under the graph of the density function.
+Rejection sampling is a type of exact simulation method in numerical analysis and works for any distribution in $\rm I\!R^m$ with a density. The idea of rejection sampling is to uniformly randomly sample the support and keep samples in the region under the graph of the density function.
 
 Specifically, the steps of rejection sampling are:
 
@@ -50,7 +53,7 @@ The uniform distribution has probability density function:
 $$\text{pdf = }\begin{cases}\frac{1}{b - a} \text{for } x \in [a, b]\\0 \text{ otherwise}\end{cases}$$
 We first generate a bunch of deviates and then plot their density in black. Then the true density is overlayed in red.
 
-```{r}
+```{r, fig.align='center'}
 df_uniform_samples <- 
   data.frame(u = projectq2a(n = 10000, 
                        pdf = dunif, 
@@ -77,7 +80,7 @@ $$\text{where }B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alp
 
 We first generate a bunch of deviates and then plot their density in black. Then the true density is overlayed in red.
 
-```{r}
+```{r, fig.align='center'}
 df_beta_samples <- 
   data.frame(b = projectq2a(n = 10000, 
                        pdf = dbeta, 
@@ -98,7 +101,7 @@ Here is an example of using `projectq2a` to sample from a custom distribution.
 
 In this case, the custom density function is that of a beta with shape parameters 2 and 5.
 
-```{r}
+```{r, fig.align='center'}
 dcustom <- function (x) {
   sapply(X = x, 
          FUN = function(x) {
@@ -122,7 +125,13 @@ ggplot(df_custom_samples, aes(x = b)) +
 
 # projectq3a
 
+The `projectq3a` function generates random deviates from a continuous 2D distribution defined on a square. The user supplies the probability density function, and the function utilizes rejection sampling to generate the deviate pairs.
+
 ## Uniform on unit square
+
+We first demo sampling from a uniform distribution defined on the unit square. In order to do so, we must first define a joint probability density function which takes `x` and `y` as arguments for the two variables.
+
+$$\text{pdf = }\begin{cases}\frac{1}{(b - a)^2} \text{for } x, y \in [a, b]\\0 \text{ otherwise}\end{cases}$$
 
 ```{r}
 d2dunif <- function(x, y, min = 0, max = 1) {
@@ -131,17 +140,29 @@ d2dunif <- function(x, y, min = 0, max = 1) {
   else
     0
 }
+```
 
+Then we could look at what the distribution looks like in 3D.
+
+```{r, out.width='100%'}
 data.frame(x = sample(seq(0, 1, 0.01), 1000, replace = TRUE),
            y = sample(seq(0, 1, 0.01), 1000, replace = TRUE)) %>%
   mutate(z = d2dunif(x = x, y = y)) %>%
   plot_ly(., x = ~x, y = ~y, z = ~z) %>% 
   add_markers(size = 0.25)
+```
 
+Finally, we can sample from the joint distribution utilizing rejection sampling.
+
+```{r}
 projectq3a(n = 1, pdf = d2dunif, a = 0, b = 1, C = 1)
 ```
 
 ## Custom Probability Density Function on a square
+
+We next demo sampling from a custom joint distribution defined on the square from -1 to +1. Again, we first define the joint pdf function which takes `x` and `y` as quantile arguments.
+
+$$\text{pdf = }\begin{cases}\frac{3}{8}(x^2 + y^2) \text{for } x, y \in [-1, +1]\\0 \text{ otherwise}\end{cases}$$
 
 ```{r}
 d2dcirclecontour <- function(x, y) {
@@ -150,12 +171,20 @@ d2dcirclecontour <- function(x, y) {
   else
     0
 }
+```
 
+Then we could look at what the distribution looks like in 3D.
+
+```{r, out.width='100%'}
 data.frame(x = sample(seq(-1, 1, 0.01), 1000, replace = TRUE), 
            y = sample(seq(-1, 1, 0.01), 1000, replace = TRUE)) %>% 
   mutate(z = d2dcirclecontour(x = x, y = y)) %>% 
   plot_ly(., x = ~x, y = ~y, z = ~z, color = ~z) %>% 
   add_markers(size = 0.25)
+```
 
+Finally, we can sample from the joint distribution utilizing rejection sampling.
+
+```{r}
 projectq3a(n = 1, pdf = d2dcirclecontour, a = -1, b = 1, C = 0.75)
 ```
