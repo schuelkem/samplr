@@ -15,15 +15,17 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
+library(dplyr)
 library(ggplot2)
+library(plotly)
 library(samplr)
 ```
 
 The `samplr` package provides a number of functions for sampling from continuous distributions.
 
-# rdist
+# projectq2a
 
-The `rdist` function generates random deviates from a continuous random variable. The user supplies the probability density function of the continuous random variable, and the function utilizing rejection sampling to generate the deviates.
+The `projectq2a` function generates random deviates from a continuous random variable. The user supplies the probability density function of the continuous random variable, and the function utilizing rejection sampling to generate the deviates.
 
 Rejection sampling is a type of exact simulation method in numerical analysis and works for any distrubtion in $\rm I\!R^m$ with a density. The idea of rejection sampling is to uniformly randomly sample the support and keep samples in the region under the graph of the density function.
 
@@ -41,7 +43,7 @@ Rejection sampling has two main assumptions:
 
 ## Uniform
 
-Here is an example of using `rdist` to sample from the standard uniform distribution.
+Here is an example of using `projectq2a` to sample from the standard uniform distribution.
 
 The uniform distribution has probability density function:
 
@@ -50,7 +52,7 @@ We first generate a bunch of deviates and then plot their density in black. Then
 
 ```{r}
 df_uniform_samples <- 
-  data.frame(u = rdist(n = 10000, 
+  data.frame(u = projectq2a(n = 10000, 
                        pdf = dunif, 
                        a = 0, 
                        b = 1, 
@@ -65,7 +67,7 @@ ggplot(df_uniform_samples, aes(x = u)) +
 
 ## Beta
 
-Here is an example of using `rdist` to sample from a beta distribution with both shape parameters equal to 2.
+Here is an example of using `projectq2a` to sample from a beta distribution with both shape parameters equal to 2.
 
 The beta distribution has probability density function:
 
@@ -77,7 +79,7 @@ We first generate a bunch of deviates and then plot their density in black. Then
 
 ```{r}
 df_beta_samples <- 
-  data.frame(b = rdist(n = 10000, 
+  data.frame(b = projectq2a(n = 10000, 
                        pdf = dbeta, 
                        a = 0, 
                        b = 1, 
@@ -92,7 +94,7 @@ ggplot(df_beta_samples, aes(x = b)) +
 
 ## Custom Random Variable
 
-Here is an example of using `rdist` to sample from a custom distribution.
+Here is an example of using `projectq2a` to sample from a custom distribution.
 
 In this case, the custom density function is that of a beta with shape parameters 2 and 5.
 
@@ -107,7 +109,7 @@ dcustom <- function (x) {
 }
 
 df_custom_samples <- 
-  data.frame(b = rdist(n = 10000, 
+  data.frame(b = projectq2a(n = 10000, 
                        pdf = dcustom, 
                        a = 0, 
                        b = 1, 
@@ -116,4 +118,44 @@ df_custom_samples <-
 ggplot(df_custom_samples, aes(x = b)) + 
   geom_density() + 
   stat_function(aes(x = 0), fun = dcustom, color = "red")
+```
+
+# projectq3a
+
+## Uniform on unit square
+
+```{r}
+d2dunif <- function(x, y, min = 0, max = 1) {
+  if(min <= x && x <= max && min <= y && y <= max)
+    (max - min)^(-2)
+  else
+    0
+}
+
+data.frame(x = sample(seq(0, 1, 0.01), 1000, replace = TRUE),
+           y = sample(seq(0, 1, 0.01), 1000, replace = TRUE)) %>%
+  mutate(z = d2dunif(x = x, y = y)) %>%
+  plot_ly(., x = ~x, y = ~y, z = ~z) %>% 
+  add_markers(size = 0.25)
+
+projectq3a(n = 1, pdf = d2dunif, a = 0, b = 1, C = 1)
+```
+
+## Custom Probability Density Function on a square
+
+```{r}
+d2dcirclecontour <- function(x, y) {
+  if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
+    (3/8)*(x^2 + y^2)
+  else
+    0
+}
+
+data.frame(x = sample(seq(-1, 1, 0.01), 1000, replace = TRUE), 
+           y = sample(seq(-1, 1, 0.01), 1000, replace = TRUE)) %>% 
+  mutate(z = d2dcirclecontour(x = x, y = y)) %>% 
+  plot_ly(., x = ~x, y = ~y, z = ~z, color = ~z) %>% 
+  add_markers(size = 0.25)
+
+projectq3a(n = 1, pdf = d2dcirclecontour, a = -1, b = 1, C = 0.75)
 ```

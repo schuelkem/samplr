@@ -1,4 +1,4 @@
-#' rdist
+#' projectq2a
 #'
 #' @description This function generates random deviates from a continuous random variable with the supplied probability density function via rejection sampling.
 #'
@@ -12,8 +12,20 @@
 #' @export
 #'
 #' @examples
-#' hist(rdist(n = 1000000, pdf = dunif, a = 0, b = 1, C = 1, min = 0, max = 1), probability = TRUE)
-rdist <- function(n, pdf, a, b, C, ...) {
+#' ## sample from standard uniform
+#' projectq2a(n = 1, pdf = dunif, a = 0, b = 1, C = 1, min = 0, max = 1)
+#'
+#' ## plot many samples from standard uniform as densities
+#' hist(projectq2a(n = 10000, pdf = dunif, a = 0, b = 1, C = 1, min = 0, max = 1), probability = TRUE)
+#' curve(dunif, col = "red", add = TRUE)
+#'
+#' ## sample from beta(2, 2)
+#' projectq2a(n = 1, pdf = dbeta, a = 0, b = 1, C = 1.5, shape1 = 2, shape2 = 2)
+#'
+#' ## plot many samples from beta(2, 2)
+#' hist(projectq2a(n = 10000, pdf = dbeta, a = 0, b = 1, C = 1.5, shape1 = 2, shape2 = 2), probability = TRUE)
+#' curve(dbeta(x, shape1 = 2, shape2 = 2), col = "red", add = TRUE)
+projectq2a <- function(n, pdf, a, b, C, ...) {
   assertive::assert_is_numeric(n)
   if(length(n) > 1)
     n <- length(n)

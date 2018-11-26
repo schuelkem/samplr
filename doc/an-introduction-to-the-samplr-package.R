@@ -4,12 +4,14 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
+library(dplyr)
 library(ggplot2)
+library(plotly)
 library(samplr)
 
 ## ------------------------------------------------------------------------
 df_uniform_samples <- 
-  data.frame(u = rdist(n = 10000, 
+  data.frame(u = projectq2a(n = 10000, 
                        pdf = dunif, 
                        a = 0, 
                        b = 1, 
@@ -23,7 +25,7 @@ ggplot(df_uniform_samples, aes(x = u)) +
 
 ## ------------------------------------------------------------------------
 df_beta_samples <- 
-  data.frame(b = rdist(n = 10000, 
+  data.frame(b = projectq2a(n = 10000, 
                        pdf = dbeta, 
                        a = 0, 
                        b = 1, 
@@ -46,7 +48,7 @@ dcustom <- function (x) {
 }
 
 df_custom_samples <- 
-  data.frame(b = rdist(n = 10000, 
+  data.frame(b = projectq2a(n = 10000, 
                        pdf = dcustom, 
                        a = 0, 
                        b = 1, 
@@ -55,4 +57,36 @@ df_custom_samples <-
 ggplot(df_custom_samples, aes(x = b)) + 
   geom_density() + 
   stat_function(aes(x = 0), fun = dcustom, color = "red")
+
+## ------------------------------------------------------------------------
+d2dunif <- function(x, y, min = 0, max = 1) {
+  if(min <= x && x <= max && min <= y && y <= max)
+    (max - min)^(-2)
+  else
+    0
+}
+
+data.frame(x = sample(seq(0, 1, 0.01), 1000, replace = TRUE),
+           y = sample(seq(0, 1, 0.01), 1000, replace = TRUE)) %>%
+  mutate(z = d2dunif(x = x, y = y)) %>%
+  plot_ly(., x = ~x, y = ~y, z = ~z) %>% 
+  add_markers(size = 0.25)
+
+projectq3a(n = 1, pdf = d2dunif, a = 0, b = 1, C = 1)
+
+## ------------------------------------------------------------------------
+d2dcirclecontour <- function(x, y) {
+  if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
+    (3/8)*(x^2 + y^2)
+  else
+    0
+}
+
+data.frame(x = sample(seq(-1, 1, 0.01), 1000, replace = TRUE), 
+           y = sample(seq(-1, 1, 0.01), 1000, replace = TRUE)) %>% 
+  mutate(z = d2dcirclecontour(x = x, y = y)) %>% 
+  plot_ly(., x = ~x, y = ~y, z = ~z, color = ~z) %>% 
+  add_markers(size = 0.25)
+
+projectq3a(n = 1, pdf = d2dcirclecontour, a = -1, b = 1, C = 0.75)
 

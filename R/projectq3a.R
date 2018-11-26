@@ -1,57 +1,4 @@
-#' d2dunif
-#'
-#' @description This function returns the density for a 2D uniform distribution defined on a square.
-#'
-#' @param x,y vector of quantiles.
-#' @param min,max lower and upper limits of the distribution on either side. Must be finite.
-#'
-#' @return a numeric density
-#' @export
-#'
-#' @examples
-#' d2dunif(x = 0.5, y = 0.5)
-#' d2dunif(x = 1, y = 1, min = 0, max = 2)
-#'
-#' ## 3D Scatterplot
-#' data.frame(x = sample(seq(0, 1, 0.01), 1000, replace = TRUE),
-#'   y = sample(seq(0, 1, 0.01), 1000, replace = TRUE)) %>%
-#'   mutate(z = d2dunif(x = x, y = y)) %>%
-#'   plot_ly(., x = ~x, y = ~y, z = ~z) %>% add_markers(size = 0.25)
-d2dunif <- function(x, y, min = 0, max = 1) {
-  if(min <= x && x <= max && min <= y && y <= max)
-    (max - min)^(-2)
-  else
-    0
-}
-
-#' d2dcirclecontour
-#'
-#' @description This function returns the density for 2D custom distribution defined on the square from -1 to 1 for each side.
-#'
-#' @param x,y vector of quantiles.
-#'
-#' @return a numeric density
-#' @export
-#'
-#' @examples
-#' d2dcust(x = 0, y = 0)
-#' d2dcust(x = 1, y = 1)
-#' d2dcust(x = 0, y = 1)
-#' d2dcust(x = 0, y = -1)
-#'
-#' ## 3D Scatterplot
-#' data.frame(x = sample(seq(-1, 1, 0.01), 1000, replace = TRUE),
-#'   y = sample(seq(-1, 1, 0.01), 1000, replace = TRUE)) %>%
-#'   mutate(z = d2dcirclecontour(x = x, y = y)) %>%
-#'   plot_ly(., x = ~x, y = ~y, z = ~z, color = ~z) %>% add_markers(size = 0.25)
-d2dcirclecontour <- function(x, y) {
-  if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
-    (3/8)*(x^2 + y^2)
-  else
-    0
-}
-
-#' r3a
+#' projectq3a
 #'
 #' @description This function generates pairs of random deviates from a 2D continuous distribution defined on a square with the supplied joint probability density function via rejection sampling.
 #'
@@ -65,10 +12,10 @@ d2dcirclecontour <- function(x, y) {
 #' @export
 #'
 #' @examples
-#' plot(r3a(n = 10000, pdf = d2dunif, a = 0, b = 1, C = 1))
-#' plot(r3a(n = 10000, pdf = d2dunif, a = 0, b = 2, C = 1/4, min = 0, max = 2))
-#' plot(r3a(n = 10000, d2dcirclecontour, a = -1, b = 1, C = 1))
-r3a <- function(n, pdf, a, b, C, ...) {
+#' plot(projectq3a(n = 10000, pdf = d2dunif, a = 0, b = 1, C = 1))
+#' plot(projectq3a(n = 10000, pdf = d2dunif, a = 0, b = 2, C = 1/4, min = 0, max = 2))
+#' plot(projectq3a(n = 10000, d2dcirclecontour, a = -1, b = 1, C = 1))
+projectq3a <- function(n, pdf, a, b, C, ...) {
   assertive::assert_is_numeric(n)
   if(length(n) > 1)
     n <- length(n)
