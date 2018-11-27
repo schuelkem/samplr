@@ -1,13 +1,14 @@
 ---
 title: "An Introduction to the samplr Package"
-author: "Matt Schuelke"
-date: "`r Sys.Date()`"
 output: 
   rmarkdown::html_vignette: 
     toc: yes
     toc_depth: 3
+    css:
+    - !expr system.file("rmarkdown/templates/html_vignette/resources/vignette.css", package = "rmarkdown")
+    - samplr.css
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{An Introduction to the samplr Package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -20,15 +21,14 @@ knitr::opts_chunk$set(
 
 library(dplyr)
 library(ggplot2)
+library(MASS)
 library(plotly)
 library(samplr)
 ```
 
 The `samplr` package provides a number of functions for sampling from continuous distributions.
 
-# projectq2a
-
-The `projectq2a` function generates random deviates from a continuous random variable. The user supplies the probability density function of the continuous random variable, and the function utilizing rejection sampling to generate the deviates.
+# Rejection Sampling
 
 Rejection sampling is a type of exact simulation method in numerical analysis and works for any distribution in $\rm I\!R^m$ with a density. The idea of rejection sampling is to uniformly randomly sample the support and keep samples in the region under the graph of the density function.
 
@@ -44,6 +44,10 @@ Rejection sampling has two main assumptions:
 1. $f(x) \le C$ (global maximum density)
 2. $\exists$ a, b such that $P(a \le X \le b) = 1$ (finite)
 
+# Function projectq2a
+
+The `projectq2a` function generates random deviates from a continuous random variable. The user supplies the probability density function of the continuous random variable, and the function utilizing rejection sampling to generate the deviates.
+
 ## Uniform
 
 Here is an example of using `projectq2a` to sample from the standard uniform distribution.
@@ -51,7 +55,7 @@ Here is an example of using `projectq2a` to sample from the standard uniform dis
 The uniform distribution has probability density function:
 
 $$\text{pdf = }\begin{cases}\frac{1}{b - a} \text{for } x \in [a, b]\\0 \text{ otherwise}\end{cases}$$
-We first generate a bunch of deviates and then plot their density in black. Then the true density is overlayed in red.
+We first generate a bunch of deviates and then plot their density in teal Then the true density is overlayed as a black line.
 
 ```{r, fig.align='center'}
 df_uniform_samples <- 
@@ -64,8 +68,11 @@ df_uniform_samples <-
                        max = 1))
 
 ggplot(df_uniform_samples, aes(x = u)) + 
-  geom_density() + 
-  stat_function(aes(x = 0), fun = dunif, args = list(min = 0, max = 1), color = "red")
+  geom_density(color = NA, fill = "#35a09c") + 
+  stat_function(aes(x = 0), fun = dunif, args = list(min = 0, max = 1)) + 
+  labs(x = "X", 
+       y = "Density") + 
+  theme_minimal()
 ```
 
 ## Beta
@@ -74,11 +81,11 @@ Here is an example of using `projectq2a` to sample from a beta distribution with
 
 The beta distribution has probability density function:
 
-$$\text{pdf = }\frac{x^{\alpha - 1}(1 - x)^{\beta - 1}}{B(\alpha, \beta)}$$
+$$\text{pdf = }\begin{cases}\frac{x^{\alpha - 1}(1 - x)^{\beta - 1}}{B(\alpha, \beta)} \text{ for }0 \le x \le 1\\0 \text{ otherwise}\end{cases}$$
 
-$$\text{where }B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha + \beta)}$$
+$$\text{where }B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha + \beta)}\text{ with }\alpha, \beta \gt 0$$
 
-We first generate a bunch of deviates and then plot their density in black. Then the true density is overlayed in red.
+We first generate a bunch of deviates and then plot their density in teal. Then the true density is overlayed as a black line.
 
 ```{r, fig.align='center'}
 df_beta_samples <- 
@@ -91,17 +98,22 @@ df_beta_samples <-
                        shape2 = 2))
 
 ggplot(df_beta_samples, aes(x = b)) + 
-  geom_density() + 
-  stat_function(aes(x = 0), fun = dbeta, args = list(shape1 = 2, shape2 = 2), color = "red")
+  geom_density(color = NA, fill = "#35a09c") + 
+  stat_function(aes(x = 0), fun = dbeta, args = list(shape1 = 2, shape2 = 2)) + 
+  labs(x = "X", 
+       y = "Density") + 
+  theme_minimal()
 ```
 
-## Custom Random Variable
+## Custom
 
 Here is an example of using `projectq2a` to sample from a custom distribution.
 
 In this case, the custom density function is that of a beta with shape parameters 2 and 5.
 
-```{r, fig.align='center'}
+$$\text{pdf = }\begin{cases}30x(1 - x)^4 \text{ for }0 \le x \le 1\\0 \text{ otherwise}\end{cases}$$
+
+```{r}
 dcustom <- function (x) {
   sapply(X = x, 
          FUN = function(x) {
@@ -110,7 +122,11 @@ dcustom <- function (x) {
                   0)
          })
 }
+```
 
+We first generate a bunch of deviates and then plot their density in teal. Then the true density is overlayed as a black line.
+
+```{r, fig.align='center'}
 df_custom_samples <- 
   data.frame(b = projectq2a(n = 10000, 
                        pdf = dcustom, 
@@ -119,15 +135,18 @@ df_custom_samples <-
                        C = 2.5))
 
 ggplot(df_custom_samples, aes(x = b)) + 
-  geom_density() + 
-  stat_function(aes(x = 0), fun = dcustom, color = "red")
+  geom_density(color = NA, fill = "#35a09c") + 
+  stat_function(aes(x = 0), fun = dcustom) + 
+  labs(x = "X", 
+       y = "Density") + 
+  theme_minimal()
 ```
 
-# projectq3a
+# Function projectq3a
 
 The `projectq3a` function generates random deviates from a continuous 2D distribution defined on a square. The user supplies the probability density function, and the function utilizes rejection sampling to generate the deviate pairs.
 
-## Uniform on unit square
+## 2D Uniform on unit square
 
 We first demo sampling from a uniform distribution defined on the unit square. In order to do so, we must first define a joint probability density function which takes `x` and `y` as arguments for the two variables.
 
@@ -142,23 +161,94 @@ d2dunif <- function(x, y, min = 0, max = 1) {
 }
 ```
 
-Then we could look at what the distribution looks like in 3D.
+Then we could examine what the distribution looks like in 3D by computing the probability densities for each x and y pair in a systematic sampling across the support.
 
-```{r, out.width='100%'}
-data.frame(x = sample(seq(0, 1, 0.01), 1000, replace = TRUE),
-           y = sample(seq(0, 1, 0.01), 1000, replace = TRUE)) %>%
-  mutate(z = d2dunif(x = x, y = y)) %>%
-  plot_ly(., x = ~x, y = ~y, z = ~z) %>% 
-  add_markers(size = 0.25)
+```{r, out.width='100%', out.height='400px'}
+l <- list(x = seq(0, 1, 0.5), 
+          y = seq(0, 1, 0.5))
+
+z <- matrix(rep(NA, length(l$x) * length(l$y)), 
+            nrow = length(l$x))
+for(r in 1:nrow(z)) {
+  for(c in 1:ncol(z)) {
+    z[r, c] <- d2dunif(x = l$x[r], y = l$y[c])
+  }
+}
+l$z <- z
+
+plot_ly(x = l$x, y = l$y, z = l$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
 ```
 
-Finally, we can sample from the joint distribution utilizing rejection sampling.
+Finally, we can sample from the joint distribution utilizing rejection sampling and estimate the kernel density.
+
+```{r, out.width='100%', out.height='400px'}
+df <- projectq3a(n = 10000, jpdf = d2dunif, a = 0, b = 1, C = 1)
+kd <- with(df, kde2d(x, y, n = 100))
+plot_ly(x = kd$x, y = kd$y, z = kd$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
+```
+
+## 2D Beta on unit square
+
+We first demo sampling from a beta distribution defined on the unit square. In order to do so, we must first define a joint probability density function which takes `x` and `y` as arguments for the two variables.
+
+$$\text{pdf = }\begin{cases}\frac{x^{\alpha - 1}(1 - x)^{\beta - 1} + y^{\alpha - 1}(1 - y)^{\beta - 1}}{2B(\alpha, \beta)}\text{ for }0 \le x, y \le 1\\0\text{ otherwise}\end{cases}$$
+
+$$\text{where }B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha + \beta)}, \text{ with }\alpha, \beta \gt 0$$
 
 ```{r}
-projectq3a(n = 1, pdf = d2dunif, a = 0, b = 1, C = 1)
+d2dbeta <- function(x, y, shape1, shape2) {
+  if(0 <= x && x <= 1 && 0 <= y && y <= 1)
+    (dbeta(x = x, shape1 = shape1, shape2 = shape2) + 
+       dbeta(x = y, shape1 = shape1, shape2 = shape2)) / 2
+  else
+    0
+}
 ```
 
-## Custom Probability Density Function on a square
+Then we could examine what the distribution looks like in 3D by computing the probability densities for each x and y pair in a systematic sampling across the support.
+
+```{r, out.width='100%', out.height='400px'}
+l <- list(x = seq(0, 1, 0.01), 
+          y = seq(0, 1, 0.01))
+
+z <- matrix(rep(NA, length(l$x) * length(l$y)), 
+            nrow = length(l$x))
+for(r in 1:nrow(z)) {
+  for(c in 1:ncol(z)) {
+    z[r, c] <- d2dbeta(x = l$x[r], y = l$y[c], shape1 = 2, shape2 = 2)
+  }
+}
+l$z <- z
+
+plot_ly(x = l$x, y = l$y, z = l$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
+```
+
+Finally, we can sample from the joint distribution utilizing rejection sampling and estimate the kernel density.
+
+```{r, out.width='100%', out.height='400px'}
+df <- projectq3a(n = 10000, jpdf = d2dbeta, a = 0, b = 1, C = 1.5, shape1 = 2, shape2 = 2)
+kd <- with(df, kde2d(x, y, n = 100))
+plot_ly(x = kd$x, y = kd$y, z = kd$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
+```
+
+
+## 2D Custom on a square
 
 We next demo sampling from a custom joint distribution defined on the square from -1 to +1. Again, we first define the joint pdf function which takes `x` and `y` as quantile arguments.
 
@@ -173,18 +263,36 @@ d2dcirclecontour <- function(x, y) {
 }
 ```
 
-Then we could look at what the distribution looks like in 3D.
+Then we could examine what the distribution looks like in 3D by computing the probability densities for each x and y pair in a systematic sampling across the support.
 
-```{r, out.width='100%'}
-data.frame(x = sample(seq(-1, 1, 0.01), 1000, replace = TRUE), 
-           y = sample(seq(-1, 1, 0.01), 1000, replace = TRUE)) %>% 
-  mutate(z = d2dcirclecontour(x = x, y = y)) %>% 
-  plot_ly(., x = ~x, y = ~y, z = ~z, color = ~z) %>% 
-  add_markers(size = 0.25)
+```{r, out.width='100%', out.height='400px'}
+l <- list(x = seq(-1, 1, 0.1), 
+          y = seq(-1, 1, 0.1))
+
+z <- matrix(rep(NA, length(l$x) * length(l$y)), 
+            nrow = length(l$x))
+for(r in 1:nrow(z)) {
+  for(c in 1:ncol(z)) {
+    z[r, c] <- d2dcirclecontour(x = l$x[r], y = l$y[c])
+  }
+}
+l$z <- z
+
+plot_ly(x = l$x, y = l$y, z = l$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
 ```
 
-Finally, we can sample from the joint distribution utilizing rejection sampling.
+Finally, we can sample from the joint distribution utilizing rejection sampling and estimate the kernel density.
 
-```{r}
-projectq3a(n = 1, pdf = d2dcirclecontour, a = -1, b = 1, C = 0.75)
+```{r, out.width='100%', out.height='400px'}
+df <- projectq3a(n = 10000, jpdf = d2dcirclecontour, a = -1, b = 1, C = 0.75)
+kd <- with(df, kde2d(x, y, n = 100))
+plot_ly(x = kd$x, y = kd$y, z = kd$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
 ```
