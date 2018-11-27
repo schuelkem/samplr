@@ -21,7 +21,15 @@ continuous distributions given their probability density functions.
 You can install this package by using `devtools`:
 
 ``` r
-devtools::install_github("schuelkem/samplr", build_vignettes = TRUE)
+devtools::install_github("schuelkem/samplr")
+```
+
+If you also wish to install the vignettes, you will need to remove one
+of the default `build_opts` arguments:
+
+``` r
+devtools::install_github(repo = "schuelkem/samplr", 
+                         build_opts = c("--no-resave-data", "--no-manual"))
 ```
 
 ## About
