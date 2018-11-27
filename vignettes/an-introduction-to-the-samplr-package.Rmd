@@ -4,6 +4,8 @@ output:
   rmarkdown::html_vignette: 
     toc: yes
     toc_depth: 3
+    includes:
+      before_body: before_body.htm
     css:
     - !expr system.file("rmarkdown/templates/html_vignette/resources/vignette.css", package = "rmarkdown")
     - samplr.css
@@ -55,7 +57,7 @@ Here is an example of using `projectq2a` to sample from the standard uniform dis
 The uniform distribution has probability density function:
 
 $$\text{pdf = }\begin{cases}\frac{1}{b - a} \text{for } x \in [a, b]\\0 \text{ otherwise}\end{cases}$$
-We first generate a bunch of deviates and then plot their density in teal Then the true density is overlayed as a black line.
+We first generate a bunch of deviates and then plot their density in teal Then the true density is overlayed as a yellow line.
 
 ```{r, fig.align='center'}
 df_uniform_samples <- 
@@ -69,7 +71,7 @@ df_uniform_samples <-
 
 ggplot(df_uniform_samples, aes(x = u)) + 
   geom_density(color = NA, fill = "#35a09c") + 
-  stat_function(aes(x = 0), fun = dunif, args = list(min = 0, max = 1)) + 
+  stat_function(aes(x = 0), fun = dunif, args = list(min = 0, max = 1), color = "#fff735", size = 1) + 
   labs(x = "X", 
        y = "Density") + 
   theme_minimal()
@@ -85,7 +87,7 @@ $$\text{pdf = }\begin{cases}\frac{x^{\alpha - 1}(1 - x)^{\beta - 1}}{B(\alpha, \
 
 $$\text{where }B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha + \beta)}\text{ with }\alpha, \beta \gt 0$$
 
-We first generate a bunch of deviates and then plot their density in teal. Then the true density is overlayed as a black line.
+We first generate a bunch of deviates and then plot their density in teal. Then the true density is overlayed as a yellow line.
 
 ```{r, fig.align='center'}
 df_beta_samples <- 
@@ -99,7 +101,7 @@ df_beta_samples <-
 
 ggplot(df_beta_samples, aes(x = b)) + 
   geom_density(color = NA, fill = "#35a09c") + 
-  stat_function(aes(x = 0), fun = dbeta, args = list(shape1 = 2, shape2 = 2)) + 
+  stat_function(aes(x = 0), fun = dbeta, args = list(shape1 = 2, shape2 = 2), color = "#fff735", size = 1) + 
   labs(x = "X", 
        y = "Density") + 
   theme_minimal()
@@ -124,7 +126,7 @@ dcustom <- function (x) {
 }
 ```
 
-We first generate a bunch of deviates and then plot their density in teal. Then the true density is overlayed as a black line.
+We first generate a bunch of deviates and then plot their density in teal. Then the true density is overlayed as a yellow line.
 
 ```{r, fig.align='center'}
 df_custom_samples <- 
@@ -136,7 +138,7 @@ df_custom_samples <-
 
 ggplot(df_custom_samples, aes(x = b)) + 
   geom_density(color = NA, fill = "#35a09c") + 
-  stat_function(aes(x = 0), fun = dcustom) + 
+  stat_function(aes(x = 0), fun = dcustom, color = "#fff735", size = 1) + 
   labs(x = "X", 
        y = "Density") + 
   theme_minimal()
