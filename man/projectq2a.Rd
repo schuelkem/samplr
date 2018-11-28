@@ -28,13 +28,15 @@ This function generates random deviates from a continuous random variable with t
 projectq2a(n = 1, pdf = dunif, a = 0, b = 1, C = 1, min = 0, max = 1)
 
 ## plot many samples from standard uniform as densities
-hist(projectq2a(n = 10000, pdf = dunif, a = 0, b = 1, C = 1, min = 0, max = 1), probability = TRUE)
+hist(projectq2a(n = 10000, pdf = dunif, a = 0, b = 1, C = 1, min = 0, max = 1),
+     probability = TRUE)
 curve(dunif, col = "red", add = TRUE)
 
 ## sample from beta(2, 2)
 projectq2a(n = 1, pdf = dbeta, a = 0, b = 1, C = 1.5, shape1 = 2, shape2 = 2)
 
 ## plot many samples from beta(2, 2)
-hist(projectq2a(n = 10000, pdf = dbeta, a = 0, b = 1, C = 1.5, shape1 = 2, shape2 = 2), probability = TRUE)
+hist(projectq2a(n = 10000, pdf = dbeta, a = 0, b = 1, C = 1.5, shape1 = 2, shape2 = 2),
+     probability = TRUE)
 curve(dbeta(x, shape1 = 2, shape2 = 2), col = "red", add = TRUE)
 }
