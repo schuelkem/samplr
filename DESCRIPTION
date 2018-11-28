@@ -15,5 +15,6 @@ Suggests:
     knitr,
     MASS,
     plotly,
-    rmarkdown
+    rmarkdown,
+    testthat
 VignetteBuilder: knitr
