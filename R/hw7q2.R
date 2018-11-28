@@ -67,7 +67,7 @@ qhw7q2 <- function(p, lower.tail = TRUE, log.p = FALSE) {
   p <- sapply(X = p, FUN = function(x) ifelse(lower.tail, x, 1 - x))
 
   inv_cdf_fun <- function(x, p) 3 * x^2 - 2 * x^3 - p
-  inv_cdf <- function(p) uniroot(f = inv_cdf_fun,
+  inv_cdf <- function(p) stats::uniroot(f = inv_cdf_fun,
                                  interval = c(0, 1),
                                  p = p)[["root"]]
 
@@ -77,5 +77,5 @@ qhw7q2 <- function(p, lower.tail = TRUE, log.p = FALSE) {
 #' @rdname hw7q2
 #' @export
 rhw7q2 <- function(n) {
-  qhw7q2(p = runif(n = n))
+  qhw7q2(p = stats::runif(n = n))
 }

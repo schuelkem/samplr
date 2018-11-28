@@ -39,9 +39,9 @@ projectq3a <- function(n, jpdf, a, b, C, ...) {
   for(i in 1:n) {
     rejecting <- TRUE
     while(rejecting) {
-      quantile.candidates <- runif(n = 2, min = a, max = b)
+      quantile.candidates <- stats::runif(n = 2, min = a, max = b)
       quantile.candidates.density <- do.call(jpdf, list(x = quantile.candidates[1], y = quantile.candidates[2], ...))
-      rejection.sampling.critical.value <- runif(n = 1, min = 0, max = C)
+      rejection.sampling.critical.value <- stats::runif(n = 1, min = 0, max = C)
       rejecting <- quantile.candidates.density < rejection.sampling.critical.value
     }
     random.samples <- rbind(random.samples,
@@ -88,8 +88,8 @@ jdunif <- function(x, y, min = 0, max = 1) {
 jdbeta <- function(x, y, shape1, shape2) {
   f <- Vectorize(function(x, y, shape1, shape2) {
     if(0 <= x && x <= 1 && 0 <= y && y <= 1)
-      (dbeta(x = x, shape1 = shape1, shape2 = shape2) +
-         dbeta(x = y, shape1 = shape1, shape2 = shape2)) / 2
+      (stats::dbeta(x = x, shape1 = shape1, shape2 = shape2) +
+         stats::dbeta(x = y, shape1 = shape1, shape2 = shape2)) / 2
     else
       0
   })

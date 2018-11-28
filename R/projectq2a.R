@@ -16,14 +16,16 @@
 #' projectq2a(n = 1, pdf = dunif, a = 0, b = 1, C = 1, min = 0, max = 1)
 #'
 #' ## plot many samples from standard uniform as densities
-#' hist(projectq2a(n = 10000, pdf = dunif, a = 0, b = 1, C = 1, min = 0, max = 1), probability = TRUE)
+#' hist(projectq2a(n = 10000, pdf = dunif, a = 0, b = 1, C = 1, min = 0, max = 1),
+#'      probability = TRUE)
 #' curve(dunif, col = "red", add = TRUE)
 #'
 #' ## sample from beta(2, 2)
 #' projectq2a(n = 1, pdf = dbeta, a = 0, b = 1, C = 1.5, shape1 = 2, shape2 = 2)
 #'
 #' ## plot many samples from beta(2, 2)
-#' hist(projectq2a(n = 10000, pdf = dbeta, a = 0, b = 1, C = 1.5, shape1 = 2, shape2 = 2), probability = TRUE)
+#' hist(projectq2a(n = 10000, pdf = dbeta, a = 0, b = 1, C = 1.5, shape1 = 2, shape2 = 2),
+#'      probability = TRUE)
 #' curve(dbeta(x, shape1 = 2, shape2 = 2), col = "red", add = TRUE)
 projectq2a <- function(n, pdf, a, b, C, ...) {
   assertive::assert_is_numeric(n)
@@ -48,9 +50,9 @@ projectq2a <- function(n, pdf, a, b, C, ...) {
   for(i in 1:n) {
     rejecting <- TRUE
     while(rejecting) {
-      quantile.candidate <- runif(n = 1, min = a, max = b)
+      quantile.candidate <- stats::runif(n = 1, min = a, max = b)
       quantile.candidate.density <- do.call(pdf, list(x = quantile.candidate, ...))
-      rejection.sampling.critical.value <- runif(n = 1, min = 0, max = C)
+      rejection.sampling.critical.value <- stats::runif(n = 1, min = 0, max = C)
       rejecting <- quantile.candidate.density < rejection.sampling.critical.value
     }
     random.samples[i] <- quantile.candidate
