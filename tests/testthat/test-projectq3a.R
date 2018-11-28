@@ -4,7 +4,7 @@ library(samplr)
 test_that("projectq3a returns a data.frame", {
   u <- projectq3a(
     n = 1,
-    jpdf = d2dunif,
+    jpdf = jdunif,
     a = 0,
     b = 1,
     C = 1
@@ -17,7 +17,7 @@ test_that("projectq3a returns correct dimensions", {
   # n = 1
   u1 <- projectq3a(
     n = 1,
-    jpdf = d2dunif,
+    jpdf = jdunif,
     a = 0,
     b = 1,
     C = 1
@@ -29,7 +29,7 @@ test_that("projectq3a returns correct dimensions", {
   # n = 11
   u11 <- projectq3a(
     n = 11,
-    jpdf = d2dunif,
+    jpdf = jdunif,
     a = 0,
     b = 1,
     C = 1
@@ -40,7 +40,7 @@ test_that("projectq3a returns correct dimensions", {
   # n = 111
   u111 <- projectq3a(
     n = 111,
-    jpdf = d2dunif,
+    jpdf = jdunif,
     a = 0,
     b = 1,
     C = 1
@@ -54,7 +54,7 @@ test_that("projectq3a passes additional parameters to the jpdf", {
   # uniform
   u <- projectq3a(
     n = 1,
-    jpdf = d2dunif,
+    jpdf = jdunif,
     a = 0,
     b = 10,
     C = 1 / 10,
@@ -62,7 +62,7 @@ test_that("projectq3a passes additional parameters to the jpdf", {
     max = 10
   )
 
-  d <- d2dunif(x = u[1, 1],
+  d <- jdunif(x = u[1, 1],
                y = u[1, 2],
                min = 0,
                max = 10)
@@ -72,7 +72,7 @@ test_that("projectq3a passes additional parameters to the jpdf", {
   # beta
   b <- projectq3a(
     n = 1,
-    jpdf = d2dbeta,
+    jpdf = jdbeta,
     a = 0,
     b = 1,
     C = 1.5,
@@ -80,10 +80,10 @@ test_that("projectq3a passes additional parameters to the jpdf", {
     shape2 = 2
   )
 
-  d <- dbeta(x = b[1, 1],
-             y = b[1, 2],
-             shape1 = 2,
-             shape2 = 2)
+  d <- jdbeta(x = b[1, 1],
+              y = b[1, 2],
+              shape1 = 2,
+              shape2 = 2)
 
   expect_true(object = 0 <= d && d <= 1.5)
 })
@@ -93,7 +93,7 @@ test_that("projectq3a returns same as last time", {
 
   b <- projectq3a(
     n = 10,
-    jpdf = d2dbeta,
+    jpdf = jdbeta,
     a = 0,
     b = 1,
     C = 1.5,
