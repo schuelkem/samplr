@@ -24,7 +24,7 @@ data.frame of random deviate pairs
 This function generates pairs of random deviates from a 2D continuous distribution defined on a square with the supplied joint probability density function via rejection sampling.
 }
 \examples{
-plot(projectq3a(n = 10000, jpdf = d2dunif, a = 0, b = 1, C = 1))
-plot(projectq3a(n = 10000, jpdf = d2dunif, a = 0, b = 2, C = 1/4, min = 0, max = 2))
-plot(projectq3a(n = 10000, jpdf = d2dcirclecontour, a = -1, b = 1, C = 1))
+plot(projectq3a(n = 10000, jpdf = jdunif, a = 0, b = 1, C = 1))
+plot(projectq3a(n = 10000, jpdf = jdunif, a = 0, b = 2, C = 1/4, min = 0, max = 2))
+plot(projectq3a(n = 10000, jpdf = jdcirclecontour, a = -1, b = 1, C = 1))
 }

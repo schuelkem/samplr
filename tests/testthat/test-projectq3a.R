@@ -1,21 +1,6 @@
 context("test-projectq3a")
 library(samplr)
 
-d2dunif <- function(x, y, min = 0, max = 1) {
-  if(min <= x && x <= max && min <= y && y <= max)
-    (max - min)^(-2)
-  else
-    0
-}
-
-d2dbeta <- function(x, y, shape1, shape2) {
-  if(0 <= x && x <= 1 && 0 <= y && y <= 1)
-    (dbeta(x = x, shape1 = shape1, shape2 = shape2) +
-       dbeta(x = y, shape1 = shape1, shape2 = shape2)) / 2
-  else
-    0
-}
-
 test_that("projectq3a returns a data.frame", {
   u <- projectq3a(
     n = 1,

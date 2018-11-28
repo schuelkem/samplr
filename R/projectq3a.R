@@ -12,9 +12,9 @@
 #' @export
 #'
 #' @examples
-#' plot(projectq3a(n = 10000, jpdf = d2dunif, a = 0, b = 1, C = 1))
-#' plot(projectq3a(n = 10000, jpdf = d2dunif, a = 0, b = 2, C = 1/4, min = 0, max = 2))
-#' plot(projectq3a(n = 10000, jpdf = d2dcirclecontour, a = -1, b = 1, C = 1))
+#' plot(projectq3a(n = 10000, jpdf = jdunif, a = 0, b = 1, C = 1))
+#' plot(projectq3a(n = 10000, jpdf = jdunif, a = 0, b = 2, C = 1/4, min = 0, max = 2))
+#' plot(projectq3a(n = 10000, jpdf = jdcirclecontour, a = -1, b = 1, C = 1))
 projectq3a <- function(n, jpdf, a, b, C, ...) {
   assertive::assert_is_numeric(n)
   if(length(n) > 1)
@@ -49,4 +49,71 @@ projectq3a <- function(n, jpdf, a, b, C, ...) {
                                        y = quantile.candidates[2]))
   }
   random.samples
+}
+
+#' jdunif
+#'
+#' @param x,y vector of quantiles
+#' @param min,max lower and upper limits of the distribution for each side. Must be finite.
+#'
+#' @return numeric vector of joint densities
+#' @export
+#'
+#' @examples
+#' jdunif(x = 0.5, y = 0.5)
+#' jdunif(x = 5, y = 5, min = 0, max = 10)
+#' jdunif(x = runif(3), y = runif(3))
+jdunif <- function(x, y, min = 0, max = 1) {
+  f <- Vectorize(function(x, y, min, max) {
+    if(min <= x && x <= max && min <= y && y <= max)
+      (max - min)^(-2)
+    else
+      0
+  })
+  f(x = x, y = y, min = min, max = max)
+}
+
+#' jdbeta
+#'
+#' @param x,y vector of quantiles
+#' @param shape1,shape2 non-negative parameters of the Beta distribution.
+#'
+#' @return numeric vector of joint densities
+#' @export
+#'
+#' @examples
+#' jdbeta(x = 0.5, y = 0.5, shape1 = 2, shape2 = 2)
+#' jdbeta(x = 0.2, y = 0.2, shape1 = 2, shape2 = 5)
+#' jdbeta(x = runif(3), y = runif(3), shape1 = 2, shape2 = 2)
+jdbeta <- function(x, y, shape1, shape2) {
+  f <- Vectorize(function(x, y, shape1, shape2) {
+    if(0 <= x && x <= 1 && 0 <= y && y <= 1)
+      (dbeta(x = x, shape1 = shape1, shape2 = shape2) +
+         dbeta(x = y, shape1 = shape1, shape2 = shape2)) / 2
+    else
+      0
+  })
+  f(x = x, y = y, shape1 = shape1, shape2 = shape2)
+}
+
+#' jdcirclecontour
+#'
+#' @param x,y vector of quantiles
+#'
+#' @return numeric vector of joint densities
+#' @export
+#'
+#' @examples
+#' jdcirclecontour(x = 0, y = 0)
+#' jdcirclecontour(x = 1, y = -1)
+#' jdcirclecontour(x = runif(n = 3, min = -1, max = 1),
+#'                 y = runif(n = 3, min = -1, max = 1))
+jdcirclecontour <- function(x, y) {
+  f <- Vectorize(function(x, y) {
+    if(-1 <= x && x <= 1 && -1 <= y && y <= 1)
+      (3/8)*(x^2 + y^2)
+    else
+      0
+  })
+  f(x = x, y = y)
 }
