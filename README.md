@@ -7,6 +7,7 @@
 [![](https://img.shields.io/badge/status-under%20development-red.svg)](https://github.com/schuelkem/samplr/)
 [![](https://img.shields.io/github/last-commit/schuelkem/samplr.svg)](https://github.com/schuelkem/samplr/commits/master)
 [![](https://travis-ci.org/schuelkem/samplr.svg?branch=master)](https://travis-ci.org/schuelkem/samplr)
+[![](https://ci.appveyor.com/api/projects/status/github/schuelkem/samplr?branch=master&svg=true)](https://ci.appveyor.com/project/schuelke/samplr)
 
 ## Overview
 
