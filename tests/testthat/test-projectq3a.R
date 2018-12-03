@@ -104,3 +104,40 @@ test_that("projectq3a returns same as last time", {
   expect_equal_to_reference(object = b,
                             file = "test-projectq3a.ref")
 })
+
+test_that("jdunif returns numeric vector of correct length", {
+  d <- jdunif(x = runif(3), y = runif(3))
+
+  expect_is(object = d, class = "numeric")
+  expect_true(object = is.vector(d))
+  expect_true(object = length(d) == 3)
+})
+
+test_that("jdunif passes additional parameters to the pdf", {
+  d <- jdunif(x = 5, y = 5, min = 0, max = 10)
+
+  expect_true(object = d == 0.01)
+})
+
+test_that("jdbeta returns numeric vector of correct length", {
+  d <- jdbeta(x = runif(3), y = runif(3), shape1 = 2, shape2 = 2)
+
+  expect_is(object = d, class = "numeric")
+  expect_true(object = is.vector(d))
+  expect_true(object = length(d) == 3)
+})
+
+test_that("jdbeta passes additional parameters to the pdf", {
+  d <- jdbeta(x = runif(1), y = runif(1), shape1 = 2, shape2 = 5)
+
+  expect_true(object = 0 <= d && d <= 2.5)
+})
+
+test_that("jdcirclecontour returns numeric vector of correct length", {
+  d <- jdcirclecontour(x = runif(n = 3, min = -1, max = 1),
+                       y = runif(n = 3, min = -1, max = 1))
+
+  expect_is(object = d, class = "numeric")
+  expect_true(object = is.vector(d))
+  expect_true(object = length(d) == 3)
+})
