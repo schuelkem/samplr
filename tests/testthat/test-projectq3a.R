@@ -89,7 +89,7 @@ test_that("projectq3a passes additional parameters to the jpdf", {
 })
 
 test_that("projectq3a returns same as last time", {
-  set.seed(8675309)
+  set.seed(42)
 
   b <- projectq3a(
     n = 10,
