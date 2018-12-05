@@ -5,9 +5,9 @@
 #'
 #' @return a quantile in the support of the distribution
 find_support_element <- function(pdf, ...) {
-  q <- rnorm(n = 1)
+  q <- stats::rnorm(n = 1)
   while(do.call(pdf, list(x = q, ...)) == 0) {
-    q <- rnorm(n = 1)
+    q <- stats::rnorm(n = 1)
   }
   q
 }
@@ -72,12 +72,12 @@ projectq3b <- function(n, pdf, a = NA, b = NA, ...) {
   random.samples <- numeric(n)
 
   quantile.current <- ifelse(use_limits,
-                             runif(n = 1, min = a, max = b),
+                             stats::runif(n = 1, min = a, max = b),
                              find_support_element(pdf, ...))
 
   for(i in 1:n) {
     quantile.proposed <- ifelse(use_limits,
-                                runif(n = 1, min = a, max = b),
+                                stats::runif(n = 1, min = a, max = b),
                                 find_support_element(pdf, ...))
 
     density.proposed <- do.call(pdf, list(x = quantile.proposed, ...))
@@ -85,10 +85,10 @@ projectq3b <- function(n, pdf, a = NA, b = NA, ...) {
 
     acceptance.ratio <- ifelse(use_limits,
                                density.proposed / density.current,
-                               (density.proposed * dnorm(x = quantile.current)) /
-                                 (density.current * dnorm(x = quantile.proposed)))
+                               (density.proposed * stats::dnorm(x = quantile.current)) /
+                                 (density.current * stats::dnorm(x = quantile.proposed)))
 
-    accept <- runif(n = 1) <= acceptance.ratio
+    accept <- stats::runif(n = 1) <= acceptance.ratio
 
     quantile.current <- ifelse(accept, quantile.proposed, quantile.current)
 
