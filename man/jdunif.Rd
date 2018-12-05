@@ -15,7 +15,7 @@ jdunif(x, y, min = 0, max = 1)
 numeric vector of joint densities
 }
 \description{
-jdunif
+This function returns the joint density of two uniform random variables defined on a square.
 }
 \examples{
 jdunif(x = 0.5, y = 0.5)

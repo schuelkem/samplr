@@ -15,7 +15,7 @@ jdbeta(x, y, shape1, shape2)
 numeric vector of joint densities
 }
 \description{
-jdbeta
+This function returns the joint density of two beta random variables defined on a square.
 }
 \examples{
 jdbeta(x = 0.5, y = 0.5, shape1 = 2, shape2 = 2)

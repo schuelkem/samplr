@@ -53,6 +53,8 @@ projectq3a <- function(n, jpdf, a, b, C, ...) {
 
 #' jdunif
 #'
+#' @description This function returns the joint density of two uniform random variables defined on a square.
+#'
 #' @param x,y vector of quantiles
 #' @param min,max lower and upper limits of the distribution for each side. Must be finite.
 #'
@@ -74,6 +76,8 @@ jdunif <- function(x, y, min = 0, max = 1) {
 }
 
 #' jdbeta
+#'
+#' @description This function returns the joint density of two beta random variables defined on a square.
 #'
 #' @param x,y vector of quantiles
 #' @param shape1,shape2 non-negative parameters of the Beta distribution.
@@ -97,6 +101,8 @@ jdbeta <- function(x, y, shape1, shape2) {
 }
 
 #' jdcirclecontour
+#'
+#' @description This function returns the joint density = (3/8)(x^2 + y^2) of two random variables defined on a square from -1 to 1.
 #'
 #' @param x,y vector of quantiles
 #'

@@ -13,7 +13,7 @@ jdcirclecontour(x, y)
 numeric vector of joint densities
 }
 \description{
-jdcirclecontour
+This function returns the joint density = (3/8)(x^2 + y^2) of two random variables defined on a square from -1 to 1.
 }
 \examples{
 jdcirclecontour(x = 0, y = 0)
