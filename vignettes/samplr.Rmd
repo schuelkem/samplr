@@ -28,9 +28,11 @@ library(plotly)
 library(samplr)
 ```
 
+# Background
+
 The `samplr` package provides a number of functions for sampling from continuous distributions.
 
-# Rejection Sampling
+## Rejection Sampling
 
 Rejection sampling is a type of exact simulation method in numerical analysis and works for any distribution in $\rm I\!R^m$ with a density. The idea of rejection sampling is to uniformly randomly sample the support and keep samples in the region under the graph of the density function.
 
@@ -45,6 +47,10 @@ Rejection sampling has two main assumptions:
 
 1. $f(x) \le C$ (global maximum density)
 2. $\exists$ a, b such that $P(a \le X \le b) = 1$ (finite)
+
+## Markov Chain Monte Carlo
+
+Another class of methods to sample from a probability distribution is called Markov chain Monte Carlo. A Markov chain constructed such that its equilibrium distribution matches the desired probability distribution allows for an approximation to random sampling from that distribution by observing the chain. The longer the chain is observed, the closer the approximation will be true random sampling.
 
 # Function projectq2a
 
@@ -268,4 +274,135 @@ plot_ly(x = kd$x, y = kd$y, z = kd$z) %>%
   layout(scene = list(xaxis = list(title = "X"), 
                       yaxis = list(title = "Y"), 
                       zaxis = list(title = "Density")))
+```
+
+# Function projectq3b
+
+The `projectq3b` function generates semi-random deviates from a continuous random variable. The user supplies the probability density function of the continuous random variable, and the function utilizing Markov chain Monte Carlo sampling to generate the deviates.
+
+## Uniform
+
+Here is an example of using `projectq3b` to sample from the standard uniform distribution.
+
+The uniform distribution has probability density function:
+
+$$\text{pdf = }\begin{cases}\frac{1}{b - a} \text{for } x \in [a, b]\\0 \text{ otherwise}\end{cases}$$
+
+We first generate a bunch of deviates and then plot their density in teal Then the true density is overlayed as a yellow line.
+
+```{r, fig.align='center'}
+df_uniform_samples <- 
+  data.frame(u = projectq3b(n = 10000, 
+                       pdf = dunif, 
+                       a = 0, 
+                       b = 1, 
+                       min = 0, 
+                       max = 1))
+
+ggplot(df_uniform_samples, aes(x = u)) + 
+  geom_density(color = NA, fill = "#35a09c") + 
+  stat_function(aes(x = 0), 
+                fun = dunif, 
+                args = list(min = 0, max = 1), 
+                color = "#fff735", 
+                size = 1) + 
+  labs(x = "X", 
+       y = "Density") + 
+  theme_minimal()
+```
+
+## Beta
+
+Here is an example of using `projectq3b` to sample from a beta distribution with both shape parameters equal to 2.
+
+The beta distribution has probability density function:
+
+$$\text{pdf = }\begin{cases}\frac{x^{\alpha - 1}(1 - x)^{\beta - 1}}{B(\alpha, \beta)} \text{ for }0 \le x \le 1\\0 \text{ otherwise}\end{cases}$$
+
+$$\text{where }B(\alpha, \beta) = \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha + \beta)}\text{ with }\alpha, \beta \gt 0$$
+
+We first generate a bunch of deviates and then plot their density in teal. Then the true density is overlayed as a yellow line.
+
+```{r, fig.align='center'}
+df_beta_samples <- 
+  data.frame(b = projectq3b(n = 10000, 
+                       pdf = dbeta, 
+                       a = 0, 
+                       b = 1, 
+                       shape1 = 5, 
+                       shape2 = 2))
+
+ggplot(df_beta_samples, aes(x = b)) + 
+  geom_density(color = NA, fill = "#35a09c") + 
+  stat_function(aes(x = 0), 
+                fun = dbeta, 
+                args = list(shape1 = 5, shape2 = 2), 
+                color = "#fff735", 
+                size = 1) + 
+  labs(x = "X", 
+       y = "Density") + 
+  theme_minimal()
+```
+
+## Custom
+
+Here is an example of using `projectq3b` to sample from a custom distribution.
+
+$$\text{pdf = }\begin{cases}\frac{x}{2} \text{ for }0 \le x \le 2\\0 \text{ otherwise}\end{cases}$$
+
+```{r}
+dcustom <- function (x) {
+  sapply(X = x, 
+         FUN = function(x) { ifelse(0 < x && x < 2, x / 2, 0) })
+}
+```
+
+We first generate a bunch of deviates and then plot their density in teal. Then the true density is overlayed as a yellow line.
+
+```{r, fig.align='center'}
+df_custom_samples <- 
+  data.frame(b = projectq3b(n = 10000, 
+                       pdf = dcustom, 
+                       a = 0, 
+                       b = 2))
+
+ggplot(df_custom_samples, aes(x = b)) + 
+  geom_density(color = NA, fill = "#35a09c") + 
+  stat_function(aes(x = 0), 
+                fun = dcustom, 
+                color = "#fff735", 
+                size = 1) + 
+  labs(x = "X", 
+       y = "Density") + 
+  theme_minimal()
+```
+
+## Exponential
+
+Markov chain Monte Carlo has an advantage over rejection sampling in that we do not have to limit ourselves to finite support such as that of uniform or beta.
+
+Here is an example of using `projectq3b` to sample from an exponential distribution with rate = 2.
+
+The exponential distribution has probability density function:
+
+$$\text{pdf = }\begin{cases}\lambda e^{-\lambda x} \text{for } x \in [0, \infty)\\0 \text{ otherwise}\end{cases}$$
+
+We first generate a bunch of deviates and then plot their density in teal Then the true density is overlayed as a yellow line.
+
+```{r, fig.align='center'}
+df_exponential_samples <- 
+  data.frame(e = projectq3b(n = 10000, 
+                       pdf = dexp, 
+                       rate = 2))
+
+ggplot(df_exponential_samples, aes(x = e)) + 
+  geom_density(color = NA, fill = "#35a09c") + 
+  stat_function(aes(x = 0), 
+                fun = dexp, 
+                args = list(rate = 2), 
+                color = "#fff735", 
+                size = 1) + 
+  labs(x = "X", 
+       y = "Density") + 
+  theme_minimal()
 ```

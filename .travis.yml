@@ -8,3 +8,10 @@ r:
     - oldrel
     - release
     - devel
+
+os:
+    - linux
+    - osx
+
+matrix:
+    fast_finish: true

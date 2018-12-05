@@ -4,14 +4,14 @@
 \alias{projectq3b}
 \title{projectq3b}
 \usage{
-projectq3b(n, pdf, a, b, ...)
+projectq3b(n, pdf, a = NA, b = NA, ...)
 }
 \arguments{
 \item{n}{number of observations. If length(n) > 1, the length is taken to be the number required.}
 
 \item{pdf}{a function that is the pdf of the random variable.}
 
-\item{a, b}{lower and upper limits of the distribution. Must be finite such that \eqn{P(a \le X \le b) = 1}.}
+\item{a, b}{optional lower and upper limits of the distribution. If provided, must be finite such that \eqn{P(a \le X \le b) = 1}.}
 
 \item{...}{further arguments passed to or from other methods.}
 }
@@ -36,5 +36,15 @@ curve(dbeta(x = x, shape1 = 2, shape2 = 2), col = "red", add = TRUE)
 dcustom <- function(x) x / 2
 deviates <- projectq3b(n = 10000, pdf = dcustom, a = 0, b = 2)
 hist(deviates, probability = TRUE)
-curve(dcustom, add = TRUE)
+curve(dcustom, col = "red", add = TRUE)
+
+## sample from exponential with rate = 2
+deviates <- projectq3b(n = 10000, pdf = dexp, rate = 2)
+hist(deviates, probability = TRUE)
+curve(dexp(x, rate = 2), col = "red", add = TRUE)
+
+## sample from chi-square with df = 1
+deviates <- projectq3b(n = 10000, pdf = dchisq, df = 1)
+hist(deviates, probability = TRUE)
+curve(dchisq(x, df = 1), col = "red", add = TRUE)
 }
