@@ -1,10 +1,12 @@
-#' find_support_element
+#' find_quantile
+#'
+#' @description This function trials quantiles until one is found with positive density.
 #'
 #' @param pdf a function that is the pdf of the random variable.
 #' @param ... further arguments passed to or from other methods.
 #'
 #' @return a quantile in the support of the distribution
-find_support_element <- function(pdf, ...) {
+find_quantile <- function(pdf, ...) {
   q <- stats::rnorm(n = 1)
   while(do.call(pdf, list(x = q, ...)) == 0) {
     q <- stats::rnorm(n = 1)
@@ -73,12 +75,12 @@ projectq3b <- function(n, pdf, a = NA, b = NA, ...) {
 
   quantile.current <- ifelse(use_limits,
                              stats::runif(n = 1, min = a, max = b),
-                             find_support_element(pdf, ...))
+                             find_quantile(pdf, ...))
 
   for(i in 1:n) {
     quantile.proposed <- ifelse(use_limits,
                                 stats::runif(n = 1, min = a, max = b),
-                                find_support_element(pdf, ...))
+                                find_quantile(pdf, ...))
 
     density.proposed <- do.call(pdf, list(x = quantile.proposed, ...))
     density.current <- do.call(pdf, list(x = quantile.current, ...))
@@ -90,7 +92,8 @@ projectq3b <- function(n, pdf, a = NA, b = NA, ...) {
 
     accept <- stats::runif(n = 1) <= acceptance.ratio
 
-    quantile.current <- ifelse(accept, quantile.proposed, quantile.current)
+    if(accept)
+      quantile.current <- quantile.proposed
 
     random.samples[i] <- quantile.current
   }

@@ -238,7 +238,7 @@ plot_ly(x = kd$x, y = kd$y, z = kd$z) %>%
 
 ## 2D Custom on a square
 
-We next demo sampling from a custom joint distribution defined on the square from -1 to +1. Again, we use `jdcirclecontour()`, an example joint probability density function from `samplr` which takes `x` and `y` as arguments for the two variables.
+We next demo sampling from a custom joint distribution defined on the square from -1 to +1. Again, we use an example joint probability density function from `samplr`, this time called `jdcirclecontour()`, which takes `x` and `y` as arguments for the two variables.
 
 $$\text{pdf = }\begin{cases}\frac{3}{8}(x^2 + y^2) \text{for } x, y \in [-1, +1]\\0 \text{ otherwise}\end{cases}$$
 
@@ -405,4 +405,134 @@ ggplot(df_exponential_samples, aes(x = e)) +
   labs(x = "X", 
        y = "Density") + 
   theme_minimal()
+```
+
+# Function projectq3c
+
+The `projectq3c` function generates semi-random deviates from a bivariate continuous distribution. The user supplies the joint probability density function, and Markov chain Monte Carlo sampling is used to generate the deviates.
+
+## 2D Uniform on unit square
+
+We first demo sampling from a uniform distribution defined on the unit square. In order to do so, we use `jdunif()`, an example joint probability density function from `samplr` which takes `x` and `y` as arguments for the two variables.
+
+$$\text{pdf = }\begin{cases}\frac{1}{(b - a)^2} \text{for } x, y \in [a, b]\\0 \text{ otherwise}\end{cases}$$
+
+Then we could examine what the distribution looks like in 3D by computing the probability densities for each x and y pair in a systematic sampling across the support.
+
+```{r, out.width='100%', out.height='400px'}
+l <- list(x = seq(0, 1, 0.5), 
+          y = seq(0, 1, 0.5))
+
+z <- matrix(rep(NA, length(l$x) * length(l$y)), 
+            nrow = length(l$x))
+for(r in 1:nrow(z)) {
+  for(c in 1:ncol(z)) {
+    z[r, c] <- jdunif(x = l$x[r], y = l$y[c])
+  }
+}
+l$z <- z
+
+plot_ly(x = l$x, y = l$y, z = l$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
+```
+
+Finally, we can sample from the joint distribution utilizing Markov chain Monte Carlo sampling and estimate the kernel density.
+
+```{r, out.width='100%', out.height='400px'}
+df <- projectq3c(n = 10000, jpdf = jdunif)
+kd <- with(df, kde2d(x, y, n = 100))
+plot_ly(x = kd$x, y = kd$y, z = kd$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
+```
+
+## Custom
+
+We next demo sampling from a custom joint distribution defined on the square from -1 to +1. Again, we use an example joint probability density function from `samplr`, this time called `jdcirclecontour()`, which takes `x` and `y` as arguments for the two variables.
+
+$$\text{pdf = }\begin{cases}\frac{3}{8}(x^2 + y^2) \text{for } x, y \in [-1, +1]\\0 \text{ otherwise}\end{cases}$$
+
+Then we could examine what the distribution looks like in 3D by computing the probability densities for each x and y pair in a systematic sampling across the support.
+
+```{r, out.width='100%', out.height='400px'}
+l <- list(x = seq(-1, 1, 0.1), 
+          y = seq(-1, 1, 0.1))
+
+z <- matrix(rep(NA, length(l$x) * length(l$y)), 
+            nrow = length(l$x))
+for(r in 1:nrow(z)) {
+  for(c in 1:ncol(z)) {
+    z[r, c] <- jdcirclecontour(x = l$x[r], y = l$y[c])
+  }
+}
+l$z <- z
+
+plot_ly(x = l$x, y = l$y, z = l$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
+```
+
+Finally, we can sample from the joint distribution utilizing Markov chain Monte Carlo sampling and estimate the kernel density.
+
+```{r, out.width='100%', out.height='400px'}
+df <- projectq3c(n = 10000, jpdf = jdcirclecontour)
+kd <- with(df, kde2d(x, y, n = 100))
+plot_ly(x = kd$x, y = kd$y, z = kd$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
+```
+
+## Bivariate Normal
+
+The most common bivariate distribution is probably the bivariate normal with probability density function:
+
+$$\text{f(x, y) = }\frac{1}{2\pi\sigma_1\sigma_2\sqrt{1-\rho^2}}\text{ exp }\bigg[-\frac{z}{2(1-\rho^2)}\bigg] \text{ for }x, y \in (-\infty, +\infty)$$
+
+where
+
+$$z \equiv \frac{(x_1 - \mu_1)^2}{\sigma_1^2} - \frac{2\rho(x_1 - \mu_1)(x_2 - \mu_2)}{\sigma_1\sigma_2} + \frac{(x_2 - \mu_2)^2}{\sigma_2^2}$$
+
+and
+
+$$\rho \equiv cor(x_1, x_2) = \frac{V_{12}}{\sigma_1\sigma_2}$$
+
+```{r, out.width='100%', out.height='400px'}
+l <- list(x = seq(-3, 3, 0.1), 
+          y = seq(-3, 3, 0.1))
+
+z <- matrix(rep(NA, length(l$x) * length(l$y)), 
+            nrow = length(l$x))
+for(r in 1:nrow(z)) {
+  for(c in 1:ncol(z)) {
+    z[r, c] <- jdnorm(x = l$x[r], y = l$y[c])
+  }
+}
+l$z <- z
+
+plot_ly(x = l$x, y = l$y, z = l$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
+```
+
+Finally, we can sample from the joint distribution utilizing Markov chain Monte Carlo sampling and estimate the kernel density.
+
+```{r, out.width='100%', out.height='400px'}
+df <- projectq3c(n = 10000, jpdf = jdnorm)
+kd <- with(df, kde2d(x, y, n = 100))
+plot_ly(x = kd$x, y = kd$y, z = kd$z) %>% 
+  add_surface() %>% 
+  layout(scene = list(xaxis = list(title = "X"), 
+                      yaxis = list(title = "Y"), 
+                      zaxis = list(title = "Density")))
 ```
