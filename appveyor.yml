@@ -27,7 +27,12 @@ environment:
   global:
     WARNINGS_ARE_ERRORS: 1
 
+  USE_RTOOLS: true
+
   matrix:
+    - R_VERSION: devel
+      R_ARCH: x64
+
     - R_VERSION: patched
       R_ARCH: x64
 
